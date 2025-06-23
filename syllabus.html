@@ -1,45 +1,89 @@
-
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JEE Tracker - Syllabus</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <script>
+  <style>
+    .navbar { background: #f8f9fa; padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+  </style>
+</head>
+<body class="bg-white text-gray-800">
+  <div class="navbar flex justify-around">
+    <a href="index.html" class="hover:underline">🏠 Home</a>
+    <a href="syllabus.html" class="font-bold text-blue-600 underline">📚 Syllabus</a>
+    <a href="mock-tests.html" class="hover:underline">📝 Mock Tests</a>
+  </div>  <div class="max-w-6xl mx-auto p-4">
+    <h1 class="text-3xl font-bold text-center mb-4">📘 JEE Tracker - Syllabus</h1>
+    <div class="flex justify-between mb-4">
+      <a href="index.html" class="text-blue-600 hover:underline">&larr; Back to Home</a>
+      <button onclick="resetProgress()" class="text-sm bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Reset All Progress</button>
+    </div><section class="mb-6">
+  <h2 class="text-2xl font-semibold mb-2">Your Progress</h2>
+  <div class="w-full bg-gray-300 h-4 rounded overflow-hidden">
+    <div id="progress-bar" class="bg-green-500 h-full transition-all duration-300" style="width: 0%"></div>
+  </div>
+  <p id="progress-text" class="text-sm mt-1">0% complete</p>
+</section>
+
+<section class="mb-4">
+  <label class="font-medium text-sm mr-2">🔍 Filter:</label>
+  <select onchange="renderSyllabus(this.value)" class="border px-2 py-1 rounded">
+    <option value="all">Show All</option>
+    <option value="incomplete">Only Incomplete</option>
+  </select>
+</section>
+
+<div id="syllabus-list" class="space-y-6"></div>
+
+  </div>  <script>
     let syllabus = {
       Physics: [ "Units and Measurements", "Kinematics", "Laws of Motion", "Work, Energy and Power", "System of Particles and Rotational Motion", "Gravitation", "Mechanical Properties of Solids", "Mechanical Properties of Fluids", "Thermal Properties of Matter", "Thermodynamics", "Kinetic Theory", "Oscillations", "Waves", "Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics" ],
       Chemistry: [ "Some Basic Concepts of Chemistry", "Structure of Atom", "Classification of Elements and Periodicity in Properties", "Chemical Bonding and Molecular Structure", "States of Matter: Gases and Liquids", "Thermodynamics", "Equilibrium", "Redox Reactions", "Hydrogen", "The s-Block Element", "Some p-Block Elements", "Organic Chemistry - Basic Principles and Techniques", "Hydrocarbons", "Environmental Chemistry", "Solid State", "Solutions", "Electrochemistry", "Chemical Kinetics", "Surface Chemistry", "The p-Block Element", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Organic Compounds Containing Nitrogen", "Biomolecules", "Polymers", "Chemistry in Everyday Life" ],
       Mathematics: [ "Sets, Relations and Functions", "Complex Numbers and Quadratic Equations", "Linear Inequalities", "Permutations and Combinations", "Binomial Theorem", "Sequence and Series", "Straight Lines", "Conic Sections", "Introduction to Three Dimensional Geometry", "Limits and Derivatives", "Mathematical Reasoning", "Statistics", "Probability", "Matrices", "Determinants", "Relations and Functions", "Inverse Trigonometric Functions", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Application of Integrals", "Differential Equations", "Vectors", "Three Dimensional Geometry", "Linear Programming", "Probability (Advanced)" ]
     };
 
-    function renderSyllabus() {
+    function renderSyllabus(filter = 'all') {
       const container = document.getElementById('syllabus-list');
       container.innerHTML = '';
       let total = 0, completed = 0;
 
       for (let subject in syllabus) {
         const id = subject.toLowerCase();
+        const topics = syllabus[subject];
+        const subjectCompleted = topics.filter(t => localStorage.getItem(`${subject}-${t}`.replace(/\s+/g, '-')) === 'true').length;
+
         const section = document.createElement('div');
 
+        const header = document.createElement('div');
+        header.className = 'flex justify-between items-center bg-gray-200 px-4 py-2 rounded font-bold';
+
+        const title = document.createElement('span');
+        title.textContent = `${subject} (${subjectCompleted}/${topics.length} Complete)`;
+
         const toggleBtn = document.createElement('button');
-        toggleBtn.className = 'w-full text-left bg-gray-200 px-4 py-2 font-bold rounded';
-        toggleBtn.textContent = subject;
-        toggleBtn.setAttribute('data-target', `${id}-topics`);
-        toggleBtn.onclick = (e) => {
-          const target = document.getElementById(e.target.getAttribute('data-target'));
-          if (target) target.classList.toggle('hidden');
+        toggleBtn.className = 'text-sm underline text-blue-600';
+        toggleBtn.textContent = 'Toggle';
+        toggleBtn.onclick = () => {
+          const list = document.getElementById(`${id}-topics`);
+          if (list) list.classList.toggle('hidden');
         };
+
+        header.appendChild(title);
+        header.appendChild(toggleBtn);
 
         const list = document.createElement('div');
         list.id = `${id}-topics`;
         list.className = 'mt-2 space-y-1 hidden';
 
-        syllabus[subject].forEach(topic => {
-          total++;
+        topics.forEach(topic => {
           const topicId = `${subject}-${topic}`.replace(/\s+/g, '-');
           const isChecked = localStorage.getItem(topicId) === 'true';
           const deadline = localStorage.getItem(`${topicId}-deadline`) || '';
+
+          if (filter === 'incomplete' && isChecked) return;
+
+          total++;
           if (isChecked) completed++;
 
           const row = document.createElement('div');
@@ -48,7 +92,6 @@
 
           const checkbox = document.createElement('input');
           checkbox.type = 'checkbox';
-          checkbox.id = topicId;
           checkbox.checked = isChecked;
           checkbox.className = 'pointer-events-none';
 
@@ -70,12 +113,12 @@
           list.appendChild(row);
         });
 
-        section.appendChild(toggleBtn);
+        section.appendChild(header);
         section.appendChild(list);
         container.appendChild(section);
       }
 
-      const percent = Math.round((completed / total) * 100);
+      const percent = total ? Math.round((completed / total) * 100) : 0;
       document.getElementById('progress-bar').style.width = `${percent}%`;
       document.getElementById('progress-text').textContent = `${percent}% complete`;
     }
@@ -90,26 +133,15 @@
       localStorage.setItem(`${id}-deadline`, date);
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      renderSyllabus();
-    });
-  </script>
-</head>
-<body class="bg-white text-gray-800">
-  <div class="max-w-5xl mx-auto p-4">
-    <h1 class="text-3xl font-bold text-center mb-4">📘 JEE Tracker - Syllabus</h1>
-    <a href="index.html" class="inline-block mb-4 text-blue-600 hover:underline">&larr; Back to Home</a>
+    function resetProgress() {
+      if (confirm('Are you sure you want to reset all progress?')) {
+        Object.keys(localStorage).forEach(k => {
+          if (!k.includes('-logs')) localStorage.removeItem(k);
+        });
+        renderSyllabus();
+      }
+    }
 
-    <section class="mb-6">
-      <h2 class="text-2xl font-semibold mb-2">Your Progress</h2>
-      <div class="w-full bg-gray-300 h-4 rounded overflow-hidden">
-        <div id="progress-bar" class="bg-green-500 h-full" style="width: 0%"></div>
-      </div>
-      <p id="progress-text" class="text-sm mt-1">0% complete</p>
-
-      <h3 class="text-xl mt-4 font-semibold">Syllabus</h3>
-      <div id="syllabus-list" class="space-y-4 mt-2"></div>
-    </section>
-  </div>
-</body>
+    document.addEventListener('DOMContentLoaded', () => renderSyllabus());
+  </script></body>
 </html>
