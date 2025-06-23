@@ -1,37 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>JEE Tracker - Home</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✅ Habit Tracker - JEE</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const allKeys = Object.keys(localStorage).filter(k => !k.includes('-deadline'));
-      const doneKeys = allKeys.filter(k => localStorage.getItem(k) === 'true');
-      const percent = allKeys.length ? Math.round((doneKeys.length / allKeys.length) * 100) : 0;
-      document.getElementById('progress-bar').style.width = percent + '%';
-      document.getElementById('progress-text').textContent = percent + '% Complete';
-    });
-  </script>
+  <style>
+    .grid-cols-habit {
+      grid-template-columns: repeat(8, 1fr);
+    }
+  </style>
 </head>
 <body class="bg-white text-gray-800">
-  <div class="max-w-xl mx-auto p-6 text-center">
-    <h1 class="text-4xl font-bold mb-4">📘 Welcome to JEE Tracker</h1>
-    <h2 class="text-xl mb-6">Track your syllabus, mocks, and goals</h2>
+  <div class="max-w-5xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center mb-4">✅ Daily Habit Tracker</h1><div class="mb-4 flex gap-2">
+  <input type="text" id="habit-input" placeholder="New habit..." class="border px-3 py-2 rounded w-full">
+  <button onclick="addHabit()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add</button>
+</div>
 
-    <div class="w-full bg-gray-300 h-4 rounded overflow-hidden mb-2">
-      <div id="progress-bar" class="bg-green-500 h-full" style="width: 0%"></div>
-    </div>
-    <p id="progress-text" class="text-sm text-gray-600 mb-6">0% Complete</p>
+<div id="habit-table" class="overflow-x-auto">
+  <table class="w-full text-sm border border-gray-300">
+    <thead class="bg-gray-100">
+      <tr id="habit-header">
+        <th class="px-2 py-1 border">Habit</th>
+      </tr>
+    </thead>
+    <tbody id="habit-body"></tbody>
+  </table>
+</div>
 
-    <div class="space-y-2">
-      <a href="syllabus.html" class="block bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition">📚 Go to Syllabus</a>
-      <a href="mock-tests.html" class="block bg-purple-600 text-white px-5 py-2 rounded hover:bg-purple-700 transition">📝 Log Mock Tests</a>
-      <a href="goals.html" class="block bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700 transition">🎯 Manage Goals</a>
-      <a href="calendar.html" class="block bg-indigo-600 text-white px-5 py-2 rounded hover:bg-indigo-700 transition">🗓️ Monthly Calendar</a>
-      <a href="habits.html" class="block bg-pink-600 text-white px-5 py-2 rounded hover:bg-pink-700 transition">✅ Habit Tracker</a>
-    </div>
-  </div>
-</body>
+<div class="mt-6 text-center">
+  <a href="index.html" class="text-blue-600 hover:underline">← Back to Home</a>
+</div>
+
+  </div>  <script>
+    const days = 7;
+
+    function loadHabits() {
+      const habits = JSON.parse(localStorage.getItem('habits') || '[]');
+      const header = document.getElementById('habit-header');
+      const body = document.getElementById('habit-body');
+      header.innerHTML = '<th class="px-2 py-1 border">Habit</th>';
+
+      for (let i = 0; i < days; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() - (days - 1 - i));
+        const label = date.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric' });
+        header.innerHTML += `<th class="px-2 py-1 border">${label}</th>`;
+      }
+
+      body.innerHTML = '';
+      habits.forEach((habit, hi) => {
+        let row = `<tr><td class="px-2 py-1 border font-medium">${habit.name}</td>`;
+        for (let i = 0; i < days; i++) {
+          const date = new Date();
+          date.setDate(date.getDate() - (days - 1 - i));
+          const key = `habit-${hi}-${date.toISOString().split('T')[0]}`;
+          const checked = localStorage.getItem(key) === 'true';
+          row += `<td class="px-2 py-1 border text-center">
+                    <input type="checkbox" ${checked ? 'checked' : ''} onchange="markHabit('${key}', this.checked)">
+                  </td>`;
+        }
+        row += '</tr>';
+        body.innerHTML += row;
+      });
+    }
+
+    function addHabit() {
+      const input = document.getElementById('habit-input');
+      const name = input.value.trim();
+      if (!name) return;
+      const habits = JSON.parse(localStorage.getItem('habits') || '[]');
+      habits.push({ name });
+      localStorage.setItem('habits', JSON.stringify(habits));
+      input.value = '';
+      loadHabits();
+    }
+
+    function markHabit(key, value) {
+      localStorage.setItem(key, value);
+    }
+
+    document.addEventListener('DOMContentLoaded', loadHabits);
+  </script></body>
 </html>
