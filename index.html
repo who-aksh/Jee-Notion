@@ -5,22 +5,84 @@
   <title>JEE Tracker - Home</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const allKeys = Object.keys(localStorage).filter(k => !k.includes('-deadline'));
-      const doneKeys = allKeys.filter(k => localStorage.getItem(k) === 'true');
-      const percent = allKeys.length ? Math.round((doneKeys.length / allKeys.length) * 100) : 0;
-      document.getElementById('progress-bar').style.width = percent + '%';
-      document.getElementById('progress-text').textContent = percent + '% Complete';
-    });
+    function calculateSyllabusProgress() {
+      const subjects = ['Physics', 'Chemistry', 'Mathematics'];
+      let total = 0, completed = 0;
+      for (const subject of subjects) {
+        const keys = Object.keys(localStorage).filter(k => k.startsWith(subject + '-') && !k.includes('-deadline'));
+        total += keys.length;
+        completed += keys.filter(k => localStorage.getItem(k) === 'true').length;
+      }
+      return total ? Math.round((completed / total) * 100) : 0;
+    }function updateProgressBar() {
+  const percent = calculateSyllabusProgress();
+  document.getElementById('progress-bar').style.width = percent + '%';
+  document.getElementById('progress-text').textContent = percent + '% Complete';
+}
+
+function getLastMockScore() {
+  const mains = JSON.parse(localStorage.getItem('mains-logs') || '[]');
+  const adv = JSON.parse(localStorage.getItem('advanced-logs') || '[]');
+  return {
+    mains: mains[0]?.score || '–',
+    adv: adv[0]?.score || '–'
+  };
+}
+
+function getHabitsDoneToday() {
+  const habits = JSON.parse(localStorage.getItem('habits') || '[]');
+  const date = new Date().toISOString().split('T')[0];
+  let count = 0;
+  for (let i = 0; i < habits.length; i++) {
+    if (localStorage.getItem(`habit-${i}-${date}`) === 'true') count++;
+  }
+  return count;
+}
+
+function getActiveGoals() {
+  const goals = JSON.parse(localStorage.getItem('goals') || '[]');
+  return goals.filter(g => !g.done).length;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  updateProgressBar();
+  const scores = getLastMockScore();
+  document.getElementById('mains-score').textContent = scores.mains;
+  document.getElementById('adv-score').textContent = scores.adv;
+  document.getElementById('habit-done').textContent = getHabitsDoneToday();
+  document.getElementById('active-goals').textContent = getActiveGoals();
+});
+
   </script>
 </head>
-<body class="bg-white text-gray-800">
-  <div class="max-w-xl mx-auto p-6 text-center">
-    <h1 class="text-4xl font-bold mb-4">📘 Welcome to JEE Tracker</h1>
-    <h2 class="text-xl mb-6">Track your syllabus, mocks, and goals</h2><div class="w-full bg-gray-300 h-4 rounded overflow-hidden mb-2">
-  <div id="progress-bar" class="bg-green-500 h-full" style="width: 0%"></div>
+<body class="bg-gradient-to-br from-white to-gray-100 min-h-screen text-gray-800">
+  <div class="max-w-2xl mx-auto p-6">
+    <h1 class="text-4xl font-bold mb-2 text-center">📘 Welcome to JEE Tracker</h1>
+    <p class="text-center text-lg mb-6 text-gray-600">Your personal Notion-style JEE Companion</p><div class="mb-6">
+  <div class="w-full bg-gray-300 h-4 rounded overflow-hidden">
+    <div id="progress-bar" class="bg-green-500 h-full transition-all" style="width: 0%"></div>
+  </div>
+  <p id="progress-text" class="text-sm text-center text-gray-600 mt-1">0% Complete</p>
 </div>
-<p id="progress-text" class="text-sm text-gray-600 mb-6">0% Complete</p>
+
+<div class="grid grid-cols-2 gap-3 text-sm mb-6">
+  <div class="bg-white rounded-xl shadow p-3">
+    <div class="text-gray-500">🎯 Active Goals</div>
+    <div class="text-xl font-semibold" id="active-goals">–</div>
+  </div>
+  <div class="bg-white rounded-xl shadow p-3">
+    <div class="text-gray-500">✅ Habits Done Today</div>
+    <div class="text-xl font-semibold" id="habit-done">–</div>
+  </div>
+  <div class="bg-white rounded-xl shadow p-3">
+    <div class="text-gray-500">📊 Last Mains Score</div>
+    <div class="text-xl font-semibold" id="mains-score">–</div>
+  </div>
+  <div class="bg-white rounded-xl shadow p-3">
+    <div class="text-gray-500">📈 Last Adv. Score</div>
+    <div class="text-xl font-semibold" id="adv-score">–</div>
+  </div>
+</div>
 
 <div class="space-y-2">
   <a href="syllabus.html" class="block bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition">📚 Go to Syllabus</a>
