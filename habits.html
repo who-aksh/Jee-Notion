@@ -1,38 +1,37 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>✅ Habit Tracker - JEE</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <style>
-    .grid-cols-habit {
-      grid-template-columns: repeat(8, 1fr);
-    }
-  </style>
 </head>
 <body class="bg-white text-gray-800">
   <div class="max-w-5xl mx-auto p-6">
-    <h1 class="text-3xl font-bold text-center mb-4">✅ Daily Habit Tracker</h1><div class="mb-4 flex gap-2">
-  <input type="text" id="habit-input" placeholder="New habit..." class="border px-3 py-2 rounded w-full">
-  <button onclick="addHabit()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add</button>
-</div>
+    <h1 class="text-3xl font-bold text-center mb-4">✅ Daily Habit Tracker</h1>
 
-<div id="habit-table" class="overflow-x-auto">
-  <table class="w-full text-sm border border-gray-300">
-    <thead class="bg-gray-100">
-      <tr id="habit-header">
-        <th class="px-2 py-1 border">Habit</th>
-      </tr>
-    </thead>
-    <tbody id="habit-body"></tbody>
-  </table>
-</div>
+    <div class="mb-4 flex gap-2">
+      <input type="text" id="habit-input" placeholder="New habit..." class="border px-3 py-2 rounded w-full">
+      <button onclick="addHabit()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add</button>
+    </div>
 
-<div class="mt-6 text-center">
-  <a href="index.html" class="text-blue-600 hover:underline">← Back to Home</a>
-</div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm border border-gray-300">
+        <thead class="bg-gray-100">
+          <tr id="habit-header">
+            <th class="px-2 py-1 border">Habit</th>
+          </tr>
+        </thead>
+        <tbody id="habit-body"></tbody>
+      </table>
+    </div>
 
-  </div>  <script>
+    <div class="mt-6 text-center">
+      <a href="index.html" class="text-blue-600 hover:underline">← Back to Home</a>
+    </div>
+  </div>
+
+  <script>
     const days = 7;
 
     function loadHabits() {
@@ -81,5 +80,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', loadHabits);
-  </script></body>
+  </script>
+</body>
 </html>
