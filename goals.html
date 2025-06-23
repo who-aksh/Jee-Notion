@@ -1,51 +1,70 @@
 <!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>JEE Tracker - Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎯 Goals - JEE Tracker</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const allKeys = Object.keys(localStorage).filter(k => !k.includes('-deadline') && !k.includes('logs') && !k.includes('goals'));
-      const doneKeys = allKeys.filter(k => localStorage.getItem(k) === 'true');
-      const percent = allKeys.length ? Math.round((doneKeys.length / allKeys.length) * 100) : 0;
-      document.getElementById('progress-bar').style.width = percent + '%';
-      document.getElementById('progress-text').textContent = percent + '% Complete';const quotes = [
-    "Success is the sum of small efforts, repeated day in and day out.",
-    "Push yourself, because no one else is going to do it for you.",
-    "Don’t stop until you’re proud.",
-    "It always seems impossible until it’s done.",
-    "Discipline is doing it even when you don’t feel like it."
-  ];
-  document.getElementById('quote').textContent = quotes[Math.floor(Math.random() * quotes.length)];
+    function loadGoals() {
+      const container = document.getElementById('goal-list');
+      const goals = JSON.parse(localStorage.getItem('goals') || '[]');
+      container.innerHTML = '';
+      goals.forEach((g, i) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-3 p-2 border rounded mb-2 bg-white';const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = g.done;
+    checkbox.onchange = () => {
+      goals[i].done = checkbox.checked;
+      localStorage.setItem('goals', JSON.stringify(goals));
+      loadGoals();
+    };
 
-  const jeeDate = new Date('2026-01-24');
-  const today = new Date();
-  const daysLeft = Math.ceil((jeeDate - today) / (1000 * 60 * 60 * 24));
-  document.getElementById('countdown').textContent = `📆 JEE Main in ${daysLeft} days`;
-});
+    const text = document.createElement('span');
+    text.textContent = g.text;
+    text.className = `flex-1 ${g.done ? 'line-through text-gray-400' : ''}`;
+
+    const del = document.createElement('button');
+    del.textContent = '🗑';
+    del.onclick = () => {
+      goals.splice(i, 1);
+      localStorage.setItem('goals', JSON.stringify(goals));
+      loadGoals();
+    };
+
+    row.appendChild(checkbox);
+    row.appendChild(text);
+    row.appendChild(del);
+    container.appendChild(row);
+  });
+}
+
+function addGoal() {
+  const input = document.getElementById('goal-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const goals = JSON.parse(localStorage.getItem('goals') || '[]');
+  goals.unshift({ text, done: false });
+  localStorage.setItem('goals', JSON.stringify(goals));
+  input.value = '';
+  loadGoals();
+}
+
+document.addEventListener('DOMContentLoaded', loadGoals);
 
   </script>
 </head>
-<body class="bg-white text-gray-800">
-  <div class="max-w-xl mx-auto p-6 text-center">
-    <h1 class="text-4xl font-bold mb-4">📘 Welcome to JEE Tracker</h1>
-    <h2 class="text-xl mb-6">Track your syllabus, mocks, and goals</h2><div class="mb-4">
-  <p id="quote" class="italic text-sm text-gray-600 mb-2">Loading quote...</p>
-  <p id="countdown" class="text-sm font-medium text-blue-700"></p>
-</div>
-
-<div class="w-full bg-gray-300 h-4 rounded overflow-hidden mb-2">
-  <div id="progress-bar" class="bg-green-500 h-full transition-all duration-300" style="width: 0%"></div>
-</div>
-<p id="progress-text" class="text-sm text-gray-600 mb-6">0% Complete</p>
-
-<div class="space-y-2">
-  <a href="syllabus.html" class="block bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition">📚 Go to Syllabus</a>
-  <a href="mock-tests.html" class="block bg-purple-600 text-white px-5 py-2 rounded hover:bg-purple-700 transition">📝 Log Mock Tests</a>
-  <a href="goals.html" class="block bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700 transition">🎯 Manage Goals</a>
-</div>
-
+<body class="bg-gray-50 text-gray-800">
+  <div class="max-w-xl mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-4 text-center">🎯 JEE Goal Manager</h1>
+    <div class="mb-4 flex gap-2">
+      <input id="goal-input" type="text" placeholder="New goal..." class="w-full px-3 py-2 border rounded" />
+      <button onclick="addGoal()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add</button>
+    </div>
+    <div id="goal-list"></div>
+    <div class="mt-6 text-center">
+      <a href="index.html" class="text-blue-600 hover:underline">← Back to Home</a>
+    </div>
   </div>
 </body>
 </html>
