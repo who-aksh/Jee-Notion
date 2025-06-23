@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🗓️ JEE Tracker - Calendar</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-800">
+  <nav class="flex justify-around py-4 border-b">
+    <a href="index.html" class="hover:underline text-blue-600">🏠 Home</a>
+    <a href="syllabus.html" class="hover:underline text-blue-600">📚 Syllabus</a>
+    <a href="mock-tests.html" class="hover:underline text-blue-600">📝 Mock Tests</a>
+    <a href="goals.html" class="hover:underline text-blue-600">🎯 Goals</a>
+    <a href="calendar.html" class="font-bold text-indigo-600 underline">🗓️ Calendar</a>
+  </nav>  <main class="max-w-4xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center mb-4">🗓️ Monthly Planner</h1><div class="mb-4 flex justify-center gap-4">
+  <button onclick="changeMonth(-1)" class="px-3 py-1 bg-gray-200 rounded">← Prev</button>
+  <h2 id="month-year" class="text-xl font-semibold"></h2>
+  <button onclick="changeMonth(1)" class="px-3 py-1 bg-gray-200 rounded">Next →</button>
+</div>
+
+<div class="calendar-grid text-center font-medium mb-2">
+  <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+</div>
+<div id="calendar-days" class="calendar-grid"></div>
+
+  </main>  <script>
+    let current = new Date();
+
+    function renderCalendar() {
+      const month = current.getMonth();
+      const year = current.getFullYear();
+      document.getElementById('month-year').textContent = current.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const totalDays = new Date(year, month + 1, 0).getDate();
+      const container = document.getElementById('calendar-days');
+      container.innerHTML = '';
+
+      for (let i = 0; i < firstDay; i++) {
+        container.appendChild(document.createElement('div'));
+      }
+
+      for (let day = 1; day <= totalDays; day++) {
+        const cell = document.createElement('div');
+        cell.className = 'border rounded p-2 h-20 text-sm relative hover:bg-indigo-100 cursor-pointer';
+
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const events = JSON.parse(localStorage.getItem(`event-${dateStr}`) || '[]');
+
+        const dayLabel = document.createElement('div');
+        dayLabel.className = 'font-bold mb-1';
+        dayLabel.textContent = day;
+
+        const eventList = document.createElement('ul');
+        events.forEach(e => {
+          const item = document.createElement('li');
+          item.textContent = e;
+          item.className = 'text-xs text-indigo-700 truncate';
+          eventList.appendChild(item);
+        });
+
+        cell.appendChild(dayLabel);
+        cell.appendChild(eventList);
+
+        cell.onclick = () => addEvent(dateStr);
+        container.appendChild(cell);
+      }
+    }
+
+    function changeMonth(diff) {
+      current.setMonth(current.getMonth() + diff);
+      renderCalendar();
+    }
+
+    function addEvent(dateStr) {
+      const title = prompt('Add event for ' + dateStr);
+      if (!title) return;
+      const events = JSON.parse(localStorage.getItem(`event-${dateStr}`) || '[]');
+      events.push(title);
+      localStorage.setItem(`event-${dateStr}`, JSON.stringify(events));
+      renderCalendar();
+    }
+
+    document.addEventListener('DOMContentLoaded', renderCalendar);
+  </script></body>
+</html>
