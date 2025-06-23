@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JEE Tracker - Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const allKeys = Object.keys(localStorage).filter(k => !k.includes('-deadline') && !k.includes('logs') && !k.includes('goals'));
+      const doneKeys = allKeys.filter(k => localStorage.getItem(k) === 'true');
+      const percent = allKeys.length ? Math.round((doneKeys.length / allKeys.length) * 100) : 0;
+      document.getElementById('progress-bar').style.width = percent + '%';
+      document.getElementById('progress-text').textContent = percent + '% Complete';const quotes = [
+    "Success is the sum of small efforts, repeated day in and day out.",
+    "Push yourself, because no one else is going to do it for you.",
+    "Don’t stop until you’re proud.",
+    "It always seems impossible until it’s done.",
+    "Discipline is doing it even when you don’t feel like it."
+  ];
+  document.getElementById('quote').textContent = quotes[Math.floor(Math.random() * quotes.length)];
+
+  const jeeDate = new Date('2026-01-24');
+  const today = new Date();
+  const daysLeft = Math.ceil((jeeDate - today) / (1000 * 60 * 60 * 24));
+  document.getElementById('countdown').textContent = `📆 JEE Main in ${daysLeft} days`;
+});
+
+  </script>
+</head>
+<body class="bg-white text-gray-800">
+  <div class="max-w-xl mx-auto p-6 text-center">
+    <h1 class="text-4xl font-bold mb-4">📘 Welcome to JEE Tracker</h1>
+    <h2 class="text-xl mb-6">Track your syllabus, mocks, and goals</h2><div class="mb-4">
+  <p id="quote" class="italic text-sm text-gray-600 mb-2">Loading quote...</p>
+  <p id="countdown" class="text-sm font-medium text-blue-700"></p>
+</div>
+
+<div class="w-full bg-gray-300 h-4 rounded overflow-hidden mb-2">
+  <div id="progress-bar" class="bg-green-500 h-full transition-all duration-300" style="width: 0%"></div>
+</div>
+<p id="progress-text" class="text-sm text-gray-600 mb-6">0% Complete</p>
+
+<div class="space-y-2">
+  <a href="syllabus.html" class="block bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition">📚 Go to Syllabus</a>
+  <a href="mock-tests.html" class="block bg-purple-600 text-white px-5 py-2 rounded hover:bg-purple-700 transition">📝 Log Mock Tests</a>
+  <a href="goals.html" class="block bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700 transition">🎯 Manage Goals</a>
+</div>
+
+  </div>
+</body>
+</html>
