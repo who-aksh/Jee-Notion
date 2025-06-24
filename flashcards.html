@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🧠 Flashcards - JEE Tracker</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .flip-card {
+      perspective: 1000px;
+    }
+    .flip-card-inner {
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+    .flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-front, .flip-back {
+      backface-visibility: hidden;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      border-radius: 1rem;
+    }
+    .flip-back {
+      transform: rotateY(180deg);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-white via-blue-50 to-gray-100 text-gray-800 min-h-screen">
+  <div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-4xl font-bold text-center mb-6">🧠 JEE Flashcards</h1>
+    <div class="text-center mb-4">
+      <a href="index.html" class="text-blue-600 hover:underline">← Back to Home</a>
+    </div><div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+  <input type="text" id="fc-subject" placeholder="Subject" class="border px-3 py-2 rounded" />
+  <input type="text" id="fc-question" placeholder="Question" class="border px-3 py-2 rounded" />
+  <input type="text" id="fc-answer" placeholder="Answer" class="border px-3 py-2 rounded" />
+  <button onclick="addFlashcard()" class="bg-green-600 text-white py-2 rounded hover:bg-green-700">+ Add</button>
+</div>
+
+<div id="flashcard-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+
+  </div>  <script>
+    function addFlashcard() {
+      const subject = document.getElementById('fc-subject').value.trim();
+      const question = document.getElementById('fc-question').value.trim();
+      const answer = document.getElementById('fc-answer').value.trim();
+      if (!subject || !question || !answer) return alert('Fill all fields');
+
+      const cards = JSON.parse(localStorage.getItem('flashcards') || '[]');
+      cards.unshift({ subject, question, answer });
+      localStorage.setItem('flashcards', JSON.stringify(cards));
+      renderFlashcards();
+    }
+
+    function renderFlashcards() {
+      const container = document.getElementById('flashcard-list');
+      const cards = JSON.parse(localStorage.getItem('flashcards') || '[]');
+      container.innerHTML = cards.map((card, i) => `
+        <div class="flip-card bg-white rounded-xl shadow relative overflow-hidden h-40 cursor-pointer" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner absolute w-full h-full">
+            <div class="flip-front flip-front bg-blue-100 text-center">
+              <div>
+                <p class="text-sm text-gray-500">${card.subject}</p>
+                <p class="font-semibold mt-2">${card.question}</p>
+              </div>
+            </div>
+            <div class="flip-back flip-back bg-green-100 text-center">
+              <p class="font-semibold">${card.answer}</p>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', renderFlashcards);
+  </script></body>
+</html>
