@@ -1,62 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>✅ Habit Tracker - JEE</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-white text-gray-800">
+<body class="bg-gradient-to-br from-white to-gray-100 text-gray-800 min-h-screen">
   <div class="max-w-5xl mx-auto p-6">
-    <h1 class="text-3xl font-bold text-center mb-4">✅ Daily Habit Tracker</h1>
+    <h1 class="text-4xl font-bold text-center mb-4">✅ Daily Habit Tracker</h1>
+    <p class="text-center text-gray-600 mb-6">Track your key study habits over the last 7 days</p><div class="mb-6 flex gap-3 items-center">
+  <input type="text" id="habit-input" placeholder="Enter new habit..." class="border border-gray-300 px-4 py-2 rounded-md flex-1 focus:outline-none focus:ring-2 focus:ring-green-400">
+  <button onclick="addHabit()" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-md transition">Add</button>
+</div>
 
-    <div class="mb-4 flex gap-2">
-      <input type="text" id="habit-input" placeholder="New habit..." class="border px-3 py-2 rounded w-full">
-      <button onclick="addHabit()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add</button>
-    </div>
+<div class="overflow-x-auto shadow rounded-lg">
+  <table class="min-w-full text-sm border border-gray-300 bg-white rounded-lg overflow-hidden">
+    <thead class="bg-gray-100 text-gray-700">
+      <tr id="habit-header">
+        <th class="px-3 py-2 border font-semibold text-left">Habit</th>
+      </tr>
+    </thead>
+    <tbody id="habit-body"></tbody>
+  </table>
+</div>
 
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm border border-gray-300">
-        <thead class="bg-gray-100">
-          <tr id="habit-header">
-            <th class="px-2 py-1 border">Habit</th>
-          </tr>
-        </thead>
-        <tbody id="habit-body"></tbody>
-      </table>
-    </div>
+<div class="mt-6 text-center">
+  <a href="index.html" class="text-blue-600 hover:underline">← Back to Home</a>
+</div>
 
-    <div class="mt-6 text-center">
-      <a href="index.html" class="text-blue-600 hover:underline">← Back to Home</a>
-    </div>
-  </div>
-
-  <script>
+  </div>  <script>
     const days = 7;
 
     function loadHabits() {
       const habits = JSON.parse(localStorage.getItem('habits') || '[]');
       const header = document.getElementById('habit-header');
       const body = document.getElementById('habit-body');
-      header.innerHTML = '<th class="px-2 py-1 border">Habit</th>';
+      header.innerHTML = '<th class="px-3 py-2 border text-left">Habit</th>';
 
       for (let i = 0; i < days; i++) {
         const date = new Date();
         date.setDate(date.getDate() - (days - 1 - i));
         const label = date.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric' });
-        header.innerHTML += `<th class="px-2 py-1 border">${label}</th>`;
+        header.innerHTML += `<th class="px-3 py-2 border text-center">${label}</th>`;
       }
 
       body.innerHTML = '';
       habits.forEach((habit, hi) => {
-        let row = `<tr><td class="px-2 py-1 border font-medium">${habit.name}</td>`;
+        let row = `<tr class="hover:bg-gray-50 transition"><td class="px-3 py-2 border font-medium">${habit.name}</td>`;
         for (let i = 0; i < days; i++) {
           const date = new Date();
           date.setDate(date.getDate() - (days - 1 - i));
           const key = `habit-${hi}-${date.toISOString().split('T')[0]}`;
           const checked = localStorage.getItem(key) === 'true';
-          row += `<td class="px-2 py-1 border text-center">
-                    <input type="checkbox" ${checked ? 'checked' : ''} onchange="markHabit('${key}', this.checked)">
+          row += `<td class="px-3 py-2 border text-center">
+                    <input type="checkbox" class="h-4 w-4" ${checked ? 'checked' : ''} onchange="markHabit('${key}', this.checked)">
                   </td>`;
         }
         row += '</tr>';
@@ -80,6 +77,5 @@
     }
 
     document.addEventListener('DOMContentLoaded', loadHabits);
-  </script>
-</body>
+  </script></body>
 </html>
