@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>📘 JEE Tracker - Dashboard</title>
+  <title>🌿 Focus HQ — Zen Study Mode</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
     body {
@@ -38,13 +38,26 @@
 }
 
 function updateStats() {
-  const allKeys = Object.keys(localStorage).filter(k => !k.includes('-deadline'));
-  const doneKeys = allKeys.filter(k => localStorage.getItem(k) === 'true');
-  const percent = allKeys.length ? Math.round((doneKeys.length / allKeys.length) * 100) : 0;
+  let syllabus = {
+    Physics: [ "Units and Measurements", "Kinematics", "Laws of Motion", "Work, Energy and Power", "System of Particles and Rotational Motion", "Gravitation", "Mechanical Properties of Solids", "Mechanical Properties of Fluids", "Thermal Properties of Matter", "Thermodynamics", "Kinetic Theory", "Oscillations", "Waves", "Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics" ],
+    Chemistry: [ "Some Basic Concepts of Chemistry", "Structure of Atom", "Classification of Elements and Periodicity in Properties", "Chemical Bonding and Molecular Structure", "States of Matter: Gases and Liquids", "Thermodynamics", "Equilibrium", "Redox Reactions", "Hydrogen", "The s-Block Element", "Some p-Block Elements", "Organic Chemistry - Basic Principles and Techniques", "Hydrocarbons", "Environmental Chemistry", "Solid State", "Solutions", "Electrochemistry", "Chemical Kinetics", "Surface Chemistry", "The p-Block Element", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Organic Compounds Containing Nitrogen", "Biomolecules", "Polymers", "Chemistry in Everyday Life" ],
+    Mathematics: [ "Sets, Relations and Functions", "Complex Numbers and Quadratic Equations", "Linear Inequalities", "Permutations and Combinations", "Binomial Theorem", "Sequence and Series", "Straight Lines", "Conic Sections", "Introduction to Three Dimensional Geometry", "Limits and Derivatives", "Mathematical Reasoning", "Statistics", "Probability", "Matrices", "Determinants", "Relations and Functions", "Inverse Trigonometric Functions", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Application of Integrals", "Differential Equations", "Vectors", "Three Dimensional Geometry", "Linear Programming", "Probability (Advanced)" ]
+  };
+
+  let total = 0, completed = 0;
+  for (let subject in syllabus) {
+    syllabus[subject].forEach(topic => {
+      const topicId = `${subject}-${topic}`.replace(/\s+/g, '-');
+      total++;
+      if (localStorage.getItem(topicId) === 'true') completed++;
+    });
+  }
+
+  const percent = total ? Math.round((completed / total) * 100) : 0;
   document.getElementById('progress-bar').style.width = percent + '%';
   document.getElementById('progress-text').textContent = percent + '% Complete';
 
-  document.getElementById('stat-topics').textContent = doneKeys.length;
+  document.getElementById('stat-topics').textContent = completed;
   document.getElementById('stat-mocks').textContent = (JSON.parse(localStorage.getItem('mains-logs') || '[]').length + JSON.parse(localStorage.getItem('advanced-logs') || '[]').length);
   document.getElementById('stat-percent').textContent = percent + '%';
 }
@@ -119,9 +132,10 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>
 
 <footer class="text-center text-xs text-gray-400 pt-4">
-  Made with ❤️ by Aksh | Dashboard v4.1
-</footer>
 
+© 2025 Aksh • Built with 💻 by your inner Top G • v4.3 Dashboard
+
+</footer>
   </div>
 </body>
 </html>
