@@ -23,6 +23,7 @@
       logs.unshift(entry);
       localStorage.setItem(`${type}-logs`, JSON.stringify(logs));
       renderMocks(type);
+      updateStats(type);
     }function renderMocks(type) {
   const logs = JSON.parse(localStorage.getItem(`${type}-logs`) || '[]');
   const container = document.getElementById(`${type}-log`);
@@ -35,8 +36,25 @@
   `).join('') : `<p class="text-sm text-gray-400">No ${type} mocks logged yet.</p>`;
 }
 
+function updateStats(type) {
+  const logs = JSON.parse(localStorage.getItem(`${type}-logs`) || '[]');
+  if (!logs.length) return;
+  let scores = logs.map(l => parseFloat(l.score)).filter(s => !isNaN(s));
+  if (!scores.length) return;
+  const best = Math.max(...scores);
+  const avg = (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1);
+  document.getElementById(`${type}-stats`).innerHTML = `
+    <p class="text-sm text-gray-700">📈 Best: <strong>${best}</strong></p>
+    <p class="text-sm text-gray-700">📊 Avg: <strong>${avg}</strong></p>
+    <p class="text-sm text-gray-700">🧾 Tests: <strong>${scores.length}</strong></p>
+  `;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  ['mains', 'advanced'].forEach(renderMocks);
+  ['mains', 'advanced'].forEach(type => {
+    renderMocks(type);
+    updateStats(type);
+  });
 });
 
   </script>
@@ -59,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <input type="text" id="mains-remarks" placeholder="Remarks (optional)" class="border px-3 py-2 rounded" />
       <button onclick="saveMock('mains')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">➕ Add Entry</button>
     </div>
+    <div id="mains-stats" class="text-sm mb-2 space-y-1"></div>
     <div id="mains-log" class="space-y-2"></div>
   </section>
 
@@ -70,6 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <input type="text" id="advanced-remarks" placeholder="Remarks (optional)" class="border px-3 py-2 rounded" />
       <button onclick="saveMock('advanced')" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">➕ Add Entry</button>
     </div>
+    <div id="advanced-stats" class="text-sm mb-2 space-y-1"></div>
     <div id="advanced-log" class="space-y-2"></div>
   </section>
 </div>
