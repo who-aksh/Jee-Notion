@@ -1,78 +1,47 @@
 <!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JEE Tracker - Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>📘 JEE Tracker - Home</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .glass {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+  </style>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const allKeys = Object.keys(localStorage).filter(k => !k.includes('-deadline'));
       const doneKeys = allKeys.filter(k => localStorage.getItem(k) === 'true');
       const percent = allKeys.length ? Math.round((doneKeys.length / allKeys.length) * 100) : 0;
       document.getElementById('progress-bar').style.width = percent + '%';
-      document.getElementById('progress-text').textContent = percent + '% Complete';// Last Mock Scores
-  ['mains', 'advanced'].forEach(type => {
-    const logs = JSON.parse(localStorage.getItem(`${type}-logs`) || '[]');
-    if (logs.length > 0) {
-      const latest = logs[0];
-      document.getElementById(`${type}-score`).textContent = latest.score;
-    }
-  });
-
-  // Goal Count
-  const goals = JSON.parse(localStorage.getItem('goals') || '[]');
-  const activeGoals = goals.filter(g => !g.done).length;
-  document.getElementById('goal-count').textContent = activeGoals;
-
-  // Habits done today
-  const today = new Date().toISOString().split('T')[0];
-  const habits = JSON.parse(localStorage.getItem('habits') || '[]');
-  let habitDone = 0;
-  habits.forEach((h, i) => {
-    const key = `habit-${i}-${today}`;
-    if (localStorage.getItem(key) === 'true') habitDone++;
-  });
-  document.getElementById('habit-done').textContent = habitDone;
-});
-
+      document.getElementById('progress-text').textContent = percent + '% Complete';
+    });
   </script>
 </head>
-<body class="bg-gradient-to-br from-white to-blue-50 via-white to-indigo-50 min-h-screen text-gray-800">
-  <div class="max-w-3xl mx-auto py-10 px-6">
-    <h1 class="text-4xl font-bold text-center mb-4">📘 Welcome to <span class="text-blue-600">JEE Tracker</span></h1>
-    <h2 class="text-lg text-center text-gray-600 mb-8">Track your syllabus, mocks, goals & habits beautifully!</h2><div class="bg-white p-5 rounded-2xl shadow-md mb-8">
-  <div class="w-full bg-gray-300 h-4 rounded overflow-hidden mb-2">
-    <div id="progress-bar" class="bg-green-500 h-full transition-all duration-500" style="width: 0%"></div>
+<body class="bg-gradient-to-br from-white via-blue-50 to-gray-100 text-gray-800 min-h-screen">
+  <div class="max-w-3xl mx-auto p-8">
+    <div class="glass rounded-3xl p-8 text-center">
+      <h1 class="text-5xl font-bold mb-3">📘 Welcome to JEE Tracker</h1>
+      <p class="text-lg text-gray-600 mb-6">Track your syllabus, mocks, goals, habits & calendar — all in one!</p><div class="w-full bg-gray-300 h-4 rounded-full overflow-hidden mb-2">
+    <div id="progress-bar" class="bg-green-500 h-full transition-all duration-700 ease-in-out" style="width: 0%"></div>
   </div>
-  <p id="progress-text" class="text-sm text-gray-600 text-right">0% Complete</p>
-</div>
+  <p id="progress-text" class="text-sm text-gray-700 mb-6">0% Complete</p>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-  <div class="bg-blue-100 border-l-4 border-blue-500 p-4 rounded-xl">
-    <p class="text-sm text-gray-600">Last JEE Mains Score</p>
-    <p class="text-xl font-semibold" id="mains-score">-</p>
-  </div>
-  <div class="bg-purple-100 border-l-4 border-purple-500 p-4 rounded-xl">
-    <p class="text-sm text-gray-600">Last JEE Advanced Score</p>
-    <p class="text-xl font-semibold" id="advanced-score">-</p>
-  </div>
-  <div class="bg-green-100 border-l-4 border-green-500 p-4 rounded-xl">
-    <p class="text-sm text-gray-600">Goals Remaining</p>
-    <p class="text-xl font-semibold" id="goal-count">-</p>
-  </div>
-  <div class="bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded-xl">
-    <p class="text-sm text-gray-600">Habits Done Today</p>
-    <p class="text-xl font-semibold" id="habit-done">-</p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <a href="syllabus.html" class="block bg-blue-600 text-white px-5 py-3 rounded-xl shadow hover:bg-blue-700 transition">📚 Syllabus</a>
+    <a href="mock-tests.html" class="block bg-purple-600 text-white px-5 py-3 rounded-xl shadow hover:bg-purple-700 transition">📝 Mock Tests</a>
+    <a href="goals.html" class="block bg-green-600 text-white px-5 py-3 rounded-xl shadow hover:bg-green-700 transition">🎯 Goals</a>
+    <a href="habits.html" class="block bg-pink-600 text-white px-5 py-3 rounded-xl shadow hover:bg-pink-700 transition">🔥 Habit Tracker</a>
+    <a href="calendar.html" class="block bg-yellow-500 text-white px-5 py-3 rounded-xl shadow hover:bg-yellow-600 transition">📅 Calendar</a>
   </div>
 </div>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
-  <a href="syllabus.html" class="bg-blue-600 text-white py-3 rounded-xl shadow hover:bg-blue-700 transition">📚 Syllabus Tracker</a>
-  <a href="mock-tests.html" class="bg-purple-600 text-white py-3 rounded-xl shadow hover:bg-purple-700 transition">📝 Mock Tests</a>
-  <a href="goals.html" class="bg-green-600 text-white py-3 rounded-xl shadow hover:bg-green-700 transition">🎯 Goal Manager</a>
-  <a href="habits.html" class="bg-yellow-500 text-white py-3 rounded-xl shadow hover:bg-yellow-600 transition">✅ Habit Tracker</a>
-  <a href="calendar.html" class="bg-indigo-600 text-white py-3 rounded-xl shadow hover:bg-indigo-700 transition">🗓️ Monthly Calendar</a>
-</div>
+<footer class="mt-8 text-center text-sm text-gray-400">
+  Made with ❤️ by Aksh | Powered by HTML + Tailwind
+</footer>
 
   </div>
 </body>
