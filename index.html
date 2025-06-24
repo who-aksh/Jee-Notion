@@ -2,45 +2,124 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>📘 JEE Tracker - Home</title>
+  <title>📘 JEE Tracker - Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
     .glass {
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, #ddd, transparent);
+      margin: 1.5rem 0;
     }
   </style>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const allKeys = Object.keys(localStorage).filter(k => !k.includes('-deadline'));
-      const doneKeys = allKeys.filter(k => localStorage.getItem(k) === 'true');
-      const percent = allKeys.length ? Math.round((doneKeys.length / allKeys.length) * 100) : 0;
-      document.getElementById('progress-bar').style.width = percent + '%';
-      document.getElementById('progress-text').textContent = percent + '% Complete';
-    });
+    const quotes = [
+      "Push yourself, because no one else is going to do it for you.",
+      "Success doesn’t come to you. You go to it.",
+      "Dream big. Work hard. Stay focused.",
+      "Your future is created by what you do today."
+    ];function daysLeft(target) {
+  const examDate = new Date(target);
+  const today = new Date();
+  const diff = Math.ceil((examDate - today) / (1000 * 60 * 60 * 24));
+  return diff >= 0 ? `${diff} days left` : `Done`;
+}
+
+function updateStats() {
+  const allKeys = Object.keys(localStorage).filter(k => !k.includes('-deadline'));
+  const doneKeys = allKeys.filter(k => localStorage.getItem(k) === 'true');
+  const percent = allKeys.length ? Math.round((doneKeys.length / allKeys.length) * 100) : 0;
+  document.getElementById('progress-bar').style.width = percent + '%';
+  document.getElementById('progress-text').textContent = percent + '% Complete';
+
+  document.getElementById('stat-topics').textContent = doneKeys.length;
+  document.getElementById('stat-mocks').textContent = (JSON.parse(localStorage.getItem('mains-logs') || '[]').length + JSON.parse(localStorage.getItem('advanced-logs') || '[]').length);
+  document.getElementById('stat-percent').textContent = percent + '%';
+}
+
+function loadQuote() {
+  const q = quotes[Math.floor(Math.random() * quotes.length)];
+  document.getElementById('quote').textContent = '"' + q + '"';
+}
+
+function loadCountdowns() {
+  document.getElementById('jee-jan').textContent = daysLeft('2026-01-20');
+  document.getElementById('jee-apr').textContent = daysLeft('2026-04-04');
+  document.getElementById('jee-adv').textContent = daysLeft('2026-05-24');
+  document.getElementById('boards').textContent = daysLeft('2026-03-01');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadQuote();
+  updateStats();
+  loadCountdowns();
+});
+
   </script>
 </head>
 <body class="bg-gradient-to-br from-white via-blue-50 to-gray-100 text-gray-800 min-h-screen">
-  <div class="max-w-3xl mx-auto p-8">
-    <div class="glass rounded-3xl p-8 text-center">
-      <h1 class="text-5xl font-bold mb-3">📘 Welcome to JEE Tracker</h1>
-      <p class="text-lg text-gray-600 mb-6">Track your syllabus, mocks, goals, habits & calendar — all in one!</p><div class="w-full bg-gray-300 h-4 rounded-full overflow-hidden mb-2">
-    <div id="progress-bar" class="bg-green-500 h-full transition-all duration-700 ease-in-out" style="width: 0%"></div>
+  <div class="max-w-6xl mx-auto px-6 py-10 space-y-8">
+    <div class="glass rounded-3xl px-6 py-8 text-center">
+      <h1 class="text-5xl font-extrabold mb-2 tracking-tight">📘 JEE Dashboard</h1>
+      <p class="text-lg italic text-gray-600 mb-4" id="quote">Loading...</p>
+      <div class="w-full bg-gray-300 h-4 rounded-full overflow-hidden mb-1">
+        <div id="progress-bar" class="bg-green-500 h-full transition-all duration-700" style="width: 0%"></div>
+      </div>
+      <p id="progress-text" class="text-sm text-gray-700">Loading progress...</p>
+    </div><div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div class="glass p-6 rounded-2xl">
+    <h2 class="card-title">⏳ Countdown to Exams</h2>
+    <ul class="text-base text-gray-700 space-y-1">
+      <li><strong>JEE Mains (Jan):</strong> <span id="jee-jan"></span></li>
+      <li><strong>JEE Mains (Apr):</strong> <span id="jee-apr"></span></li>
+      <li><strong>JEE Advanced:</strong> <span id="jee-adv"></span></li>
+      <li><strong>Boards:</strong> <span id="boards"></span></li>
+    </ul>
   </div>
-  <p id="progress-text" class="text-sm text-gray-700 mb-6">0% Complete</p>
-
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <a href="syllabus.html" class="block bg-blue-600 text-white px-5 py-3 rounded-xl shadow hover:bg-blue-700 transition">📚 Syllabus</a>
-    <a href="mock-tests.html" class="block bg-purple-600 text-white px-5 py-3 rounded-xl shadow hover:bg-purple-700 transition">📝 Mock Tests</a>
-    <a href="goals.html" class="block bg-green-600 text-white px-5 py-3 rounded-xl shadow hover:bg-green-700 transition">🎯 Goals</a>
-    <a href="habits.html" class="block bg-pink-600 text-white px-5 py-3 rounded-xl shadow hover:bg-pink-700 transition">🔥 Habit Tracker</a>
-    <a href="calendar.html" class="block bg-yellow-500 text-white px-5 py-3 rounded-xl shadow hover:bg-yellow-600 transition">📅 Calendar</a>
+  <div class="glass p-6 rounded-2xl">
+    <h2 class="card-title">📊 Quick Stats</h2>
+    <div class="grid grid-cols-3 text-center gap-4">
+      <div>
+        <p class="text-2xl font-bold text-blue-600" id="stat-topics">--</p>
+        <p class="text-sm text-gray-500">Topics Done</p>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-purple-600" id="stat-mocks">--</p>
+        <p class="text-sm text-gray-500">Mocks Logged</p>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-green-600" id="stat-percent">--</p>
+        <p class="text-sm text-gray-500">Syllabus %</p>
+      </div>
+    </div>
   </div>
 </div>
 
-<footer class="mt-8 text-center text-sm text-gray-400">
-  Made with ❤️ by Aksh | Powered by HTML + Tailwind
+<div class="section-divider"></div>
+
+<div class="glass rounded-2xl px-6 py-6 text-center grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+  <a href="syllabus.html" class="block bg-blue-600 text-white px-5 py-3 rounded-xl shadow hover:bg-blue-700 transition">📚 Syllabus</a>
+  <a href="mock-tests.html" class="block bg-purple-600 text-white px-5 py-3 rounded-xl shadow hover:bg-purple-700 transition">📝 Mock Tests</a>
+  <a href="goals.html" class="block bg-green-600 text-white px-5 py-3 rounded-xl shadow hover:bg-green-700 transition">🎯 Goals</a>
+  <a href="habits.html" class="block bg-pink-600 text-white px-5 py-3 rounded-xl shadow hover:bg-pink-700 transition">🔥 Habits</a>
+  <a href="calendar.html" class="block bg-yellow-500 text-white px-5 py-3 rounded-xl shadow hover:bg-yellow-600 transition">📅 Calendar</a>
+  <a href="flashcards.html" class="block bg-indigo-500 text-white px-5 py-3 rounded-xl shadow hover:bg-indigo-600 transition">🧠 Flashcards</a>
+</div>
+
+<footer class="text-center text-xs text-gray-400 pt-4">
+  Made with ❤️ by Aksh | Dashboard v4.1
 </footer>
 
   </div>
