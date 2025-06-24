@@ -1,141 +1,65 @@
 <!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🌿 Focus HQ — Zen Study Mode</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
     body {
-      font-family: 'Inter', sans-serif;
+      transition: background 0.4s ease, color 0.4s ease;
     }
     .glass {
-      background: rgba(255, 255, 255, 0.55);
-      backdrop-filter: blur(14px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      border-radius: 1rem;
     }
-    .card-title {
-      font-weight: 600;
-      font-size: 1.25rem;
-      margin-bottom: 0.5rem;
-    }
-    .section-divider {
-      height: 1px;
-      background: linear-gradient(to right, transparent, #ddd, transparent);
-      margin: 1.5rem 0;
+    .dark .glass {
+      background: rgba(30, 30, 30, 0.6);
+      color: #f0f0f0;
     }
   </style>
   <script>
-    const quotes = [
-      "Push yourself, because no one else is going to do it for you.",
-      "Success doesn’t come to you. You go to it.",
-      "Dream big. Work hard. Stay focused.",
-      "Your future is created by what you do today."
-    ];function daysLeft(target) {
-  const examDate = new Date(target);
-  const today = new Date();
-  const diff = Math.ceil((examDate - today) / (1000 * 60 * 60 * 24));
-  return diff >= 0 ? `${diff} days left` : `Done`;
-}
-
-function updateStats() {
-  let syllabus = {
-    Physics: [ "Units and Measurements", "Kinematics", "Laws of Motion", "Work, Energy and Power", "System of Particles and Rotational Motion", "Gravitation", "Mechanical Properties of Solids", "Mechanical Properties of Fluids", "Thermal Properties of Matter", "Thermodynamics", "Kinetic Theory", "Oscillations", "Waves", "Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics" ],
-    Chemistry: [ "Some Basic Concepts of Chemistry", "Structure of Atom", "Classification of Elements and Periodicity in Properties", "Chemical Bonding and Molecular Structure", "States of Matter: Gases and Liquids", "Thermodynamics", "Equilibrium", "Redox Reactions", "Hydrogen", "The s-Block Element", "Some p-Block Elements", "Organic Chemistry - Basic Principles and Techniques", "Hydrocarbons", "Environmental Chemistry", "Solid State", "Solutions", "Electrochemistry", "Chemical Kinetics", "Surface Chemistry", "The p-Block Element", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Organic Compounds Containing Nitrogen", "Biomolecules", "Polymers", "Chemistry in Everyday Life" ],
-    Mathematics: [ "Sets, Relations and Functions", "Complex Numbers and Quadratic Equations", "Linear Inequalities", "Permutations and Combinations", "Binomial Theorem", "Sequence and Series", "Straight Lines", "Conic Sections", "Introduction to Three Dimensional Geometry", "Limits and Derivatives", "Mathematical Reasoning", "Statistics", "Probability", "Matrices", "Determinants", "Relations and Functions", "Inverse Trigonometric Functions", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Application of Integrals", "Differential Equations", "Vectors", "Three Dimensional Geometry", "Linear Programming", "Probability (Advanced)" ]
+    document.addEventListener('DOMContentLoaded', () => {
+      const allKeys = Object.keys(localStorage).filter(k => !k.includes('-deadline'));
+      const doneKeys = allKeys.filter(k => localStorage.getItem(k) === 'true');
+      const percent = allKeys.length ? Math.round((doneKeys.length / allKeys.length) * 100) : 0;
+      document.getElementById('progress-bar').style.width = percent + '%';
+      document.getElementById('progress-text').textContent = percent + '% Complete';const toggle = document.getElementById('dark-toggle');
+  toggle.onclick = () => {
+    document.documentElement.classList.toggle('dark');
+    localStorage.setItem('dark-mode', document.documentElement.classList.contains('dark'));
   };
-
-  let total = 0, completed = 0;
-  for (let subject in syllabus) {
-    syllabus[subject].forEach(topic => {
-      const topicId = `${subject}-${topic}`.replace(/\s+/g, '-');
-      total++;
-      if (localStorage.getItem(topicId) === 'true') completed++;
-    });
+  if (localStorage.getItem('dark-mode') === 'true') {
+    document.documentElement.classList.add('dark');
   }
-
-  const percent = total ? Math.round((completed / total) * 100) : 0;
-  document.getElementById('progress-bar').style.width = percent + '%';
-  document.getElementById('progress-text').textContent = percent + '% Complete';
-
-  document.getElementById('stat-topics').textContent = completed;
-  document.getElementById('stat-mocks').textContent = (JSON.parse(localStorage.getItem('mains-logs') || '[]').length + JSON.parse(localStorage.getItem('advanced-logs') || '[]').length);
-  document.getElementById('stat-percent').textContent = percent + '%';
-}
-
-function loadQuote() {
-  const q = quotes[Math.floor(Math.random() * quotes.length)];
-  document.getElementById('quote').textContent = '"' + q + '"';
-}
-
-function loadCountdowns() {
-  document.getElementById('jee-jan').textContent = daysLeft('2026-01-20');
-  document.getElementById('jee-apr').textContent = daysLeft('2026-04-04');
-  document.getElementById('jee-adv').textContent = daysLeft('2026-05-24');
-  document.getElementById('boards').textContent = daysLeft('2026-03-01');
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  loadQuote();
-  updateStats();
-  loadCountdowns();
 });
 
   </script>
 </head>
-<body class="bg-gradient-to-br from-white via-blue-50 to-gray-100 text-gray-800 min-h-screen">
-  <div class="max-w-6xl mx-auto px-6 py-10 space-y-8">
-    <div class="glass rounded-3xl px-6 py-8 text-center">
-      <h1 class="text-5xl font-extrabold mb-2 tracking-tight">📘 JEE Dashboard</h1>
-      <p class="text-lg italic text-gray-600 mb-4" id="quote">Loading...</p>
-      <div class="w-full bg-gray-300 h-4 rounded-full overflow-hidden mb-1">
-        <div id="progress-bar" class="bg-green-500 h-full transition-all duration-700" style="width: 0%"></div>
-      </div>
-      <p id="progress-text" class="text-sm text-gray-700">Loading progress...</p>
-    </div><div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-  <div class="glass p-6 rounded-2xl">
-    <h2 class="card-title">⏳ Countdown to Exams</h2>
-    <ul class="text-base text-gray-700 space-y-1">
-      <li><strong>JEE Mains (Jan):</strong> <span id="jee-jan"></span></li>
-      <li><strong>JEE Mains (Apr):</strong> <span id="jee-apr"></span></li>
-      <li><strong>JEE Advanced:</strong> <span id="jee-adv"></span></li>
-      <li><strong>Boards:</strong> <span id="boards"></span></li>
-    </ul>
-  </div>
-  <div class="glass p-6 rounded-2xl">
-    <h2 class="card-title">📊 Quick Stats</h2>
-    <div class="grid grid-cols-3 text-center gap-4">
-      <div>
-        <p class="text-2xl font-bold text-blue-600" id="stat-topics">--</p>
-        <p class="text-sm text-gray-500">Topics Done</p>
-      </div>
-      <div>
-        <p class="text-2xl font-bold text-purple-600" id="stat-mocks">--</p>
-        <p class="text-sm text-gray-500">Mocks Logged</p>
-      </div>
-      <div>
-        <p class="text-2xl font-bold text-green-600" id="stat-percent">--</p>
-        <p class="text-sm text-gray-500">Syllabus %</p>
-      </div>
+<body class="bg-gradient-to-br from-white via-teal-50 to-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
+  <div class="max-w-xl mx-auto px-6 py-10">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-4xl font-bold">📘 Focus HQ</h1>
+      <button id="dark-toggle" class="text-xs px-3 py-1 border border-gray-400 rounded-full hover:bg-teal-200 dark:hover:bg-teal-600 transition">🌓 Toggle Mode</button>
     </div>
-  </div>
+    <h2 class="text-lg mb-6 text-gray-500 dark:text-gray-300">Track your syllabus, mocks & goals in one calm place</h2><div class="w-full bg-gray-300 h-4 rounded overflow-hidden mb-2">
+  <div id="progress-bar" class="bg-teal-500 h-full transition-all duration-500" style="width: 0%"></div>
+</div>
+<p id="progress-text" class="text-sm text-gray-600 dark:text-gray-400 mb-6">0% Complete</p>
+
+<div class="grid gap-3">
+  <a href="syllabus.html" class="block glass px-5 py-3 text-center text-lg font-medium text-white bg-teal-600 hover:bg-teal-700 transition">📚 Go to Syllabus</a>
+  <a href="mock-tests.html" class="block glass px-5 py-3 text-center text-lg font-medium text-white bg-teal-500 hover:bg-teal-600 transition">📝 Log Mock Tests</a>
+  <a href="calendar.html" class="block glass px-5 py-3 text-center text-lg font-medium text-white bg-teal-400 hover:bg-teal-500 transition">📅 Open Calendar</a>
+  <a href="goals.html" class="block glass px-5 py-3 text-center text-lg font-medium text-white bg-teal-400 hover:bg-teal-500 transition">🎯 Manage Goals</a>
+  <a href="habits.html" class="block glass px-5 py-3 text-center text-lg font-medium text-white bg-teal-400 hover:bg-teal-500 transition">🔥 Habit Tracker</a>
 </div>
 
-<div class="section-divider"></div>
-
-<div class="glass rounded-2xl px-6 py-6 text-center grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-  <a href="syllabus.html" class="block bg-blue-600 text-white px-5 py-3 rounded-xl shadow hover:bg-blue-700 transition">📚 Syllabus</a>
-  <a href="mock-tests.html" class="block bg-purple-600 text-white px-5 py-3 rounded-xl shadow hover:bg-purple-700 transition">📝 Mock Tests</a>
-  <a href="goals.html" class="block bg-green-600 text-white px-5 py-3 rounded-xl shadow hover:bg-green-700 transition">🎯 Goals</a>
-  <a href="habits.html" class="block bg-pink-600 text-white px-5 py-3 rounded-xl shadow hover:bg-pink-700 transition">🔥 Habits</a>
-  <a href="calendar.html" class="block bg-yellow-500 text-white px-5 py-3 rounded-xl shadow hover:bg-yellow-600 transition">📅 Calendar</a>
-  <a href="flashcards.html" class="block bg-indigo-500 text-white px-5 py-3 rounded-xl shadow hover:bg-indigo-600 transition">🧠 Flashcards</a>
-</div>
-
-<footer class="text-center text-xs text-gray-400 pt-4">
-
-© 2025 Aksh • Built with 💻 by your inner Top G • v4.3 Dashboard
-
+<footer class="text-center text-xs text-gray-400 pt-8 dark:text-gray-500">
+  © 2025 • Built with 💻 and calm focus • v4.3
 </footer>
+
   </div>
 </body>
 </html>
